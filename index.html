@@ -86,7 +86,8 @@
   .lv-보통 { background: var(--peach); color: var(--peach-deep); }
   .lv-어려움 { background: var(--pink); color: var(--pink-deep); }
 
-  .card-body { display: grid; grid-template-columns: 1fr 1.1fr; }
+  /* minmax(0, …) → 안에 긴 영상 줄이 있어도 칸이 화면보다 넓어지지 않게 */
+  .card-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); }
   .col { padding: 20px 22px; min-width: 0; }   /* min-width:0 → 영상 줄이 칸 밖으로 안 넘치게 */
   .col + .col { border-left: 1px solid var(--line); background: var(--soft); }
   .col-title { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 15px; margin-bottom: 12px; }
@@ -95,7 +96,8 @@
   /* 이렇게 찍었어요: 인스타 공식 임베드를 옆으로 넘겨 보기 */
   .posts { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory;
            padding-bottom: 8px; scrollbar-width: thin; }
-  .post { flex: 0 0 300px; scroll-snap-align: start; }
+  .post { flex: 0 0 min(300px, 85%); scroll-snap-align: start; }   /* 폰에선 다음 영상이 살짝 보이게 */
+  .post iframe { min-width: 0 !important; max-width: 100% !important; }
   .post blockquote.instagram-media { margin: 0 !important; min-width: 0 !important; width: 100% !important;
                                      border-radius: 14px !important; }
   .post .fallback { display: grid; place-items: center; height: 120px; border-radius: 14px; background: var(--chip);
@@ -123,7 +125,7 @@
   .plan-empty { color: var(--sub); font-size: 14px; }
 
   /* 카드 아래 */
-  .extra { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; padding: 16px 22px 20px;
+  .extra { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; padding: 16px 22px 20px;
            border-top: 1px solid var(--line); font-size: 14px; }
   .extra h4 { margin: 0 0 8px; font-size: 14px; font-weight: 700; }
   .ideas { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -136,7 +138,8 @@
   footer { text-align: center; color: var(--sub); font-size: 13px; margin-top: 40px; }
 
   @media (max-width: 720px) {   /* 폰에서는 위아래로 */
-    .card-body, .extra { grid-template-columns: 1fr; }
+    .card-body, .extra { grid-template-columns: minmax(0, 1fr); }
+    .col, .card-head, .extra { padding-left: 16px; padding-right: 16px; }
     .col + .col { border-left: 0; border-top: 1px solid var(--line); }
     .hero { padding-top: 40px; }
     .tags { grid-template-columns: repeat(4, 1fr); gap: 8px; }
