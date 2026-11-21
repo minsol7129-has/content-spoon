@@ -87,7 +87,7 @@
   .lv-어려움 { background: var(--pink); color: var(--pink-deep); }
 
   .card-body { display: grid; grid-template-columns: 1fr 1.1fr; }
-  .col { padding: 20px 22px; }
+  .col { padding: 20px 22px; min-width: 0; }   /* min-width:0 → 영상 줄이 칸 밖으로 안 넘치게 */
   .col + .col { border-left: 1px solid var(--line); background: var(--soft); }
   .col-title { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 15px; margin-bottom: 12px; }
   .col-title small { font-weight: 500; font-size: 12px; color: var(--sub); }
