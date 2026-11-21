@@ -169,6 +169,8 @@
 <!-- 오늘의 기획: 예약 작업이 매일 아침 8시 30분쯤 이 파일을 새로 쓰고, 화면은 9시 정각에 새 기획으로 바뀌어 -->
 
 <script src="daily.js"></script>
+<!-- 이렇게 찍었어요 영상 묶음: 유형마다 최대 20개, 매일 아침 10시에 그중 5개씩 돌아가며 보여줘 -->
+<script src="reels.js"></script>
 <script>
 // ───────── 태그 목록 ─────────
 // 태그 하나 = 콘텐츠 유형 하나 (CONTENTS의 tags와 1:1로 맞춰져 있어)
@@ -176,75 +178,57 @@ const TAGS = ["요리","여행","패션","뷰티","운동","공부","반려동�
               "카페","독서","그림","사진","음악","게임","IT/AI","재테크"];
 
 // ───────── 콘텐츠 유형 데이터 ─────────
-// posts: 예시 릴스의 게시물 코드 (instagram.com/p/코드/ 에서 '코드' 부분).
-//   2026-11-21에 각 유형의 해시태그 페이지에서 모은 공개 릴스야.
-//   사진을 복사하지 않고 인스타 공식 임베드(퍼가기)로 보여줘. 주인이 지우면 여기서도 사라져.
+// 영상(릴스) 목록은 reels.js에 따로 있어. 사진을 복사하지 않고 인스타 공식 임베드(퍼가기)로 보여줘.
 // hashtags: 누르면 인스타 해시태그 페이지가 열려서 실제 예시를 볼 수 있어.
 const CONTENTS = [
   { title:"자취 요리 레시피 릴스", tags:["요리"], format:"릴스 15~30초", level:"쉬움",
     ideas:["편의점 재료 5분 요리","냉장고 털이 레시피","1인분 밀프렙 일주일"],
-    hashtags:["자취요리","간단레시피","자취생레시피"],
-    posts:["DdBV4YiRagc","DfGkvc0TRxL","DYE03JdiBBQ","DaNbKzcxn3A","DfmIRHvpC1k"] },
+    hashtags:["자취요리","간단레시피","자취생레시피"] },
   { title:"카페 투어 기록", tags:["카페"], format:"캐러셀 사진 + 짧은 리뷰", level:"쉬움",
     ideas:["동네 숨은 카페 TOP 3","디저트 맛집 지도","분위기별 카페 추천"],
-    hashtags:["카페투어","카페추천","디저트맛집"],
-    posts:["DJHQVT4ppSk","Dd2kj0Kvi_B","C-wba50yPFo","DXociKIzU4W"] },
+    hashtags:["카페투어","카페추천","디저트맛집"] },
   { title:"여행 브이로그", tags:["여행"], format:"릴스 30~60초", level:"보통",
     ideas:["1박 2일 코스 정리","여행 경비 공개","현지인 맛집 찾기"],
-    hashtags:["여행브이로그","국내여행","여행스타그램"],
-    posts:["DYUKr3zz6Rs","DXCAH3OktAc","DcQf91EhTvb","DUIqVewEhqb","DPv2siKEXEO","DRBoZ6mk3eQ"] },
+    hashtags:["여행브이로그","국내여행","여행스타그램"] },
   { title:"데일리 코디 (OOTD)", tags:["패션"], format:"사진 / 릴스 전환 효과", level:"쉬움",
     ideas:["옷 하나로 3가지 코디","계절별 데일리룩","가성비 쇼핑 하울"],
-    hashtags:["ootd","데일리룩","코디추천"],
-    posts:["C_sRjm-JqqC","DYUOz-YJInx","CyI3_vevrbf","Dey9KlSSJoq","DRwjVnxDxBi"] },
+    hashtags:["ootd","데일리룩","코디추천"] },
   { title:"메이크업 튜토리얼", tags:["뷰티"], format:"릴스 Before/After", level:"보통",
     ideas:["5분 출근 메이크업","올리브영 추천템 리뷰","퍼스널컬러별 립 추천"],
-    hashtags:["메이크업튜토리얼","데일리메이크업","화장품추천"],
-    posts:["DcgJcc3PukT","De1v4jogDf6","DcXaMNpTYNF","DbA6PuxJD_f","Dd6QyUszyVv"] },
+    hashtags:["메이크업튜토리얼","데일리메이크업","화장품추천"] },
   { title:"홈트 / 운동 챌린지", tags:["운동"], format:"릴스 + 진행 기록", level:"보통",
     ideas:["30일 플랭크 챌린지","10분 홈트 루틴","운동 전후 변화 기록"],
-    hashtags:["홈트","오운완","운동기록"],
-    posts:["DfWJjh9OZsw","C-PoAmUJPiP","DU4zVNUCYz_","DFDN1QhPtWL"] },
+    hashtags:["홈트","오운완","운동기록"] },
   { title:"공부 기록 (스터디윗미)", tags:["공부"], format:"타임랩스 릴스 / 캐러셀", level:"쉬움",
     ideas:["하루 공부 타임랩스","필기 노트 공개","시험 D-day 기록"],
-    hashtags:["공스타그램","스터디윗미","공부기록"],
-    posts:["C2EIx28SRH1","DaLJTCJK4kN","DRHFYDHksuV","C5ux9rLynPT","DUnxwAhieRW"] },
+    hashtags:["공스타그램","스터디윗미","공부기록"] },
   { title:"반려동물 일상", tags:["반려동물"], format:"릴스 짧은 클립", level:"쉬움",
     ideas:["우리 집 강아지/고양이 하루","간식 리뷰","웃긴 순간 모음"],
-    hashtags:["멍스타그램","냥스타그램","반려동물"],
-    posts:["DbTPVcsnUnC","Debwt5zIxKl","DRAMcJOklEl","DcVCohEBT4c","Df5leB2TBeQ","C4UlBwjrI-G"] },
+    hashtags:["멍스타그램","냥스타그램","반려동물"] },
   { title:"방꾸미기 Before/After", tags:["인테리어"], format:"릴스 전후 비교", level:"보통",
     ideas:["원룸 셀프 인테리어","다이소템으로 방꾸미기","책상 셋업 공개"],
-    hashtags:["방꾸미기","원룸인테리어","데스크셋업"],
-    posts:["DRgh8tdkg_N","Deob1pLSCvq","Dbsff5-zKeB","DaK1GtGhj7v"] },
+    hashtags:["방꾸미기","원룸인테리어","데스크셋업"] },
   { title:"책 리뷰 카드뉴스", tags:["독서"], format:"캐러셀 카드뉴스", level:"쉬움",
     ideas:["한 줄 요약 책 추천","인상 깊은 문장 모음","이달의 독서 기록"],
-    hashtags:["책스타그램","책추천","독서기록"],
-    posts:["Df5iawOTktY","DVbIGHtEcbn","De_43FQyyUX","DQRbqxJAVXD","DeOf5W-Obe6"] },
+    hashtags:["책스타그램","책추천","독서기록"] },
   { title:"그림 과정 타임랩스", tags:["그림"], format:"릴스 타임랩스", level:"보통",
     ideas:["드로잉 과정 1분 영상","같은 그림 실력 비교","팬아트 / 캐릭터 그리기"],
-    hashtags:["그림스타그램","드로잉","일러스트"],
-    posts:["DRt91rrD4i9","C0X9ekFvfa5","DXLAGbdkg3I","DQLhwMQgfTA","C2riwYyvJGG","DZPm96dPMQm"] },
+    hashtags:["그림스타그램","드로잉","일러스트"] },
   { title:"커버곡 / 연주 영상", tags:["음악"], format:"릴스 30~60초", level:"어려움",
     ideas:["유행곡 짧은 커버","악기 연주 챌린지","플레이리스트 추천"],
-    hashtags:["커버곡","연주영상","노래추천"],
-    posts:["DSNYTPFEzFN","DegjvkAzSvg","Dev7LEvThfd","DeKO4W3vvzs","DewI9xjhNlX","DfCYl_QpART"] },
+    hashtags:["커버곡","연주영상","노래추천"] },
   { title:"게임 하이라이트", tags:["게임"], format:"릴스 하이라이트 편집", level:"보통",
     ideas:["명장면 모음","초보 꿀팁 3가지","신작 게임 첫인상 리뷰"],
-    hashtags:["게임스타그램","게임추천","게임하이라이트"],
-    posts:["DfbrHBtB5lG","DfUFKx6zaTz","DblCNJZyr9q","DfHo9QJhPRv","DfwRhS6P8sR","DfXEWWBT7c0"] },
+    hashtags:["게임스타그램","게임추천","게임하이라이트"] },
   { title:"AI / 코딩 꿀팁 카드뉴스", tags:["IT/AI"], format:"캐러셀 카드뉴스", level:"보통",
     ideas:["AI 툴 추천 TOP 5","초보 코딩 공부 순서","AI로 업무 시간 줄이기"],
-    hashtags:["ai활용","코딩공부","개발자"],
-    posts:["DfegZq4h_pS","Ct6Nw_WvXfT","DcNDOOmz3jv","Dd8KC7KTKUQ","DfV4VpLyRZF"] },
+    hashtags:["ai활용","코딩공부","개발자"] },
   { title:"절약 / 가계부 기록", tags:["재테크"], format:"캐러셀 / 릴스", level:"쉬움",
     ideas:["한 달 생활비 공개","무지출 챌린지","절약 꿀팁 모음"],
-    hashtags:["가계부","절약","짠테크"],
-    posts:["Df4y5lXS7QQ","DKB2CRGPQ4C","C-eT04Ovm8p","DaNda3yhZel","CrahwdJppg3"] },
+    hashtags:["가계부","절약","짠테크"] },
   { title:"감성 사진 / 사진 꿀팁", tags:["사진"], format:"캐러셀 사진", level:"보통",
     ideas:["폰카로 감성 사진 찍는 법","보정 전후 비교","포토스팟 추천"],
-    hashtags:["감성사진","사진스타그램","포토스팟"],
-    posts:["DflejaDzd9b","Dfrjotqz6Ma","DemWxkph9IJ","Dfb9nW-yH8l"] },
+    hashtags:["감성사진","사진스타그램","포토스팟"] },
 ];
 
 // 태그마다 보여줄 아이콘
@@ -310,14 +294,14 @@ function renderResults() {
         <!-- 왼쪽: 예시 영상 -->
         <div class="col">
           <div class="col-title">🎬 이렇게 찍었어요 <small>옆으로 넘겨 보기</small></div>
-          <div class="posts">${c.posts.map(id =>
+          <div class="posts">${todaysReels(c.title).map(id =>
             `<div class="post">
                <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/${id}/" data-instgrm-version="14">
                  <a class="fallback" href="https://www.instagram.com/p/${id}/" target="_blank" rel="noopener">▶ 인스타에서 보기</a>
                </blockquote>
              </div>`
           ).join("")}</div>
-          <div class="swipe">← 옆으로 넘기면 총 ${c.posts.length}개를 볼 수 있어 →</div>
+          <div class="swipe">← 옆으로 넘겨서 ${todaysReels(c.title).length}개를 볼 수 있어 →</div>
         </div>
         <!-- 오른쪽: 기획 -->
         <div class="col">
@@ -374,12 +358,44 @@ function renderTheme() {
   el.hidden = false;
 }
 
-// 페이지를 켜둔 채로 9시가 되면 자동으로 새 기획으로 바꿔줘
+// ───────── 이렇게 찍었어요: 매일 아침 10시에 영상 5개씩 돌려 보여주기 ─────────
+const REEL_HOUR = 10, REELS_PER_DAY = 5;
+
+// '영상 날짜' 번호: 10시 전에는 어제로 쳐. 그래서 매일 10시 정각에 번호가 하나 올라가.
+function reelDayNumber() {
+  const d = new Date();
+  if (d.getHours() < REEL_HOUR) d.setDate(d.getDate() - 1);
+  return Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000);
+}
+
+// 유형마다 정해진 순서로 섞기 (같은 유형은 언제 열어도 같은 순서)
+function shuffled(list, seedText) {
+  let h = 2166136261;
+  for (const ch of seedText) h = Math.imul(h ^ ch.codePointAt(0), 16777619);
+  const rand = () => { h = Math.imul(h ^ (h >>> 15), 2246822507); h = Math.imul(h ^ (h >>> 13), 3266489909); return ((h ^= h >>> 16) >>> 0) / 4294967296; };
+  const a = [...list];
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+}
+
+// 오늘 보여줄 영상 5개: 섞은 순서에서 하루에 5칸씩 앞으로 가. 다 돌면 처음부터 다시.
+function todaysReels(title) {
+  const pool = (window.REELS && window.REELS[title]) || [];
+  if (pool.length <= REELS_PER_DAY) return pool;
+  const order = shuffled(pool, title);
+  const start = (reelDayNumber() * REELS_PER_DAY) % order.length;
+  return Array.from({ length: REELS_PER_DAY }, (_, i) => order[(start + i) % order.length]);
+}
+
+// 페이지를 켜둔 채로 9시(기획)나 10시(영상)가 되면 자동으로 다시 그려줘
 function scheduleSwitch() {
-  const now = new Date(), at = new Date(now);
-  at.setHours(SWITCH_HOUR, 0, 1, 0);
-  if (at <= now) at.setDate(at.getDate() + 1);
-  setTimeout(() => { renderTheme(); renderResults(); scheduleSwitch(); }, at - now);
+  const now = new Date();
+  const next = [SWITCH_HOUR, REEL_HOUR].map(h => {
+    const at = new Date(now); at.setHours(h, 0, 1, 0);
+    if (at <= now) at.setDate(at.getDate() + 1);
+    return at;
+  }).sort((a, b) => a - b)[0];
+  setTimeout(() => { renderTheme(); renderResults(); scheduleSwitch(); }, next - now);
 }
 
 function dailyHTML(title) {
