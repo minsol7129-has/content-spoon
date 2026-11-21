@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>콘텐츠 한 스푼</title>
+<!-- 글꼴: Pretendard (인터넷 없으면 맑은 고딕으로 보여) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+  /* ───────── 색 (파스텔 · 라이트 / 다크) ───────── */
+  :root {
+    --bg: #fbf9fd; --card: #ffffff; --text: #2e2a36; --sub: #8b8596; --line: #eee9f4;
+    --chip: #f6f2fb; --soft: #fdfbff;
+    --lav: #e8dffa; --lav-deep: #8f76c9;   /* 라벤더 */
+    --pink: #fde4ec; --pink-deep: #d9799b; /* 핑크 */
+    --mint: #dff4ec; --mint-deep: #4fa384; /* 민트 */
+    --peach: #ffeedd; --peach-deep: #c98a4f; /* 피치 */
+    --sky: #e2eefc;
+    --shadow: 0 1px 2px rgba(60,40,90,.03), 0 6px 20px rgba(60,40,90,.06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #17151b; --card: #201d25; --text: #f1eef5; --sub: #a49eae; --line: #2f2b36;
+      --chip: #29252f; --soft: #1d1a22;
+      --lav: #352d4a; --lav-deep: #c4b2f0; --pink: #432a35; --pink-deep: #f0a6c0;
+      --mint: #233a33; --mint-deep: #8ad3b6; --peach: #3d3026; --peach-deep: #f0bf8f; --sky: #25303f;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 6px 20px rgba(0,0,0,.3);
+    }
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); line-height: 1.6;
+         font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+         -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 0 16px 64px; }
+
+  /* ───────── 맨 위 ───────── */
+  .hero { text-align: center; padding: 56px 16px 28px; }
+  .hero h1 { margin: 0; font-size: clamp(30px, 6vw, 42px); font-weight: 800; letter-spacing: -0.02em; }
+  .hero h1 .hl { background: linear-gradient(transparent 58%, var(--pink) 58%); padding: 0 4px; }
+  .hero p { margin: 10px 0 0; color: var(--sub); font-size: 16px; }
+  .theme-pill { display: inline-flex; flex-wrap: wrap; justify-content: center; gap: 4px 8px; margin-top: 18px;
+                background: var(--lav); color: var(--lav-deep); padding: 7px 16px; border-radius: 999px;
+                font-size: 14px; font-weight: 600; }
+  .theme-pill b { color: var(--text); font-weight: 700; }
+
+  /* ───────── 단계 제목 ───────── */
+  .step { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; margin: 32px 0 14px; }
+  .step .num { width: 28px; height: 28px; border-radius: 50%; background: var(--lav); color: var(--lav-deep);
+               display: grid; place-items: center; font-size: 14px; font-weight: 800; flex: none; }
+  .count { margin-left: auto; font-size: 13px; font-weight: 600; color: var(--lav-deep);
+           background: var(--lav); padding: 3px 11px; border-radius: 999px; }
+
+  /* ───────── 태그 ───────── */
+  .tags { display: grid; grid-template-columns: repeat(auto-fill, minmax(108px, 1fr)); gap: 10px; }
+  .tag { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 14px 6px 12px;
+         background: var(--card); color: var(--text); border: 1.5px solid var(--line); border-radius: 16px;
+         font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; position: relative;
+         transition: transform .15s, border-color .15s, background .15s; }
+  .tag .ico { font-size: 24px; line-height: 1; }
+  .tag:hover:not(:disabled) { transform: translateY(-2px); border-color: var(--lav-deep); }
+  .tag.on { background: var(--lav); border-color: var(--lav-deep); color: var(--lav-deep); }
+  .tag.on::after { content: "✓"; position: absolute; top: 6px; right: 9px; font-size: 12px; font-weight: 800; }
+  .tag:disabled { opacity: .35; cursor: not-allowed; }
+
+  /* ───────── 안내 / 빈 화면 ───────── */
+  .msg { color: var(--sub); margin: -4px 0 14px; font-size: 15px; }
+  .empty { text-align: center; padding: 40px 16px; background: var(--card); border: 1.5px dashed var(--line);
+           border-radius: 20px; color: var(--sub); }
+  .empty .big { font-size: 40px; margin-bottom: 6px; }
+
+  /* ───────── 카드 ───────── */
+  .grid { display: grid; gap: 20px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 22px; box-shadow: var(--shadow);
+          overflow: hidden; animation: rise .35s ease both; }
+  .card:nth-child(2) { animation-delay: .08s; }
+  @keyframes rise { from { opacity: 0; transform: translateY(10px); } }
+  .card-head { display: flex; align-items: center; gap: 14px; padding: 18px 22px; border-bottom: 1px solid var(--line); }
+  .card-ico { width: 48px; height: 48px; border-radius: 14px; background: var(--peach);
+              display: grid; place-items: center; font-size: 25px; flex: none; }
+  .card-head h3 { margin: 0; font-size: 18px; font-weight: 700; }
+  .badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+  .badge { font-size: 12px; font-weight: 600; padding: 2px 9px; border-radius: 999px; background: var(--chip); color: var(--sub); }
+  .badge.tagb { background: var(--lav); color: var(--lav-deep); }
+  .lv-쉬움 { background: var(--mint); color: var(--mint-deep); }
+  .lv-보통 { background: var(--peach); color: var(--peach-deep); }
+  .lv-어려움 { background: var(--pink); color: var(--pink-deep); }
+
+  .card-body { display: grid; grid-template-columns: 1fr 1.1fr; }
+  .col { padding: 20px 22px; }
+  .col + .col { border-left: 1px solid var(--line); background: var(--soft); }
+  .col-title { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 15px; margin-bottom: 12px; }
+  .col-title small { font-weight: 500; font-size: 12px; color: var(--sub); }
+
+  /* 이렇게 찍었어요: 인스타 공식 임베드를 옆으로 넘겨 보기 */
+  .posts { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory;
+           padding-bottom: 8px; scrollbar-width: thin; }
+  .post { flex: 0 0 300px; scroll-snap-align: start; }
+  .post blockquote.instagram-media { margin: 0 !important; min-width: 0 !important; width: 100% !important;
+                                     border-radius: 14px !important; }
+  .post .fallback { display: grid; place-items: center; height: 120px; border-radius: 14px; background: var(--chip);
+                    color: var(--lav-deep); font-weight: 600; text-decoration: none; }
+  .swipe { font-size: 12px; color: var(--sub); margin-top: 4px; }
+
+  /* 기획 패널 */
+  .plan-label { display: inline-block; font-size: 12px; font-weight: 700; color: var(--pink-deep); background: var(--pink);
+                padding: 2px 10px; border-radius: 999px; }
+  .plan-title { font-size: 17px; font-weight: 700; margin: 8px 0 12px; line-height: 1.45; }
+  .hook { background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+          padding: 10px 14px; font-weight: 600; margin-bottom: 14px; }
+  .hook small { display: block; font-size: 11px; font-weight: 700; color: var(--lav-deep); margin-bottom: 2px; }
+  .steps { list-style: none; padding: 0; margin: 0 0 14px; counter-reset: s; }
+  .steps li { position: relative; padding: 0 0 12px 34px; font-size: 14px; counter-increment: s; }
+  .steps li::before { content: counter(s); position: absolute; left: 0; top: 0; width: 24px; height: 24px;
+                      border-radius: 50%; background: var(--lav); color: var(--lav-deep); font-size: 12px; font-weight: 800;
+                      display: grid; place-items: center; }
+  .steps li:not(:last-child)::after { content: ""; position: absolute; left: 11px; top: 26px; bottom: 2px;
+                                      width: 2px; background: var(--line); }
+  .caption { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px;
+             font-size: 14px; margin-bottom: 10px; }
+  .caption .who { font-weight: 700; margin-right: 6px; color: var(--sub); }
+  .tip { background: var(--mint); color: var(--mint-deep); border-radius: 12px; padding: 10px 14px; font-size: 14px; }
+  .plan-empty { color: var(--sub); font-size: 14px; }
+
+  /* 카드 아래 */
+  .extra { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; padding: 16px 22px 20px;
+           border-top: 1px solid var(--line); font-size: 14px; }
+  .extra h4 { margin: 0 0 8px; font-size: 14px; font-weight: 700; }
+  .ideas { display: flex; flex-wrap: wrap; gap: 6px; }
+  .ideas span { background: var(--peach); color: var(--text); padding: 4px 11px; border-radius: 10px; }
+  .hash { display: flex; flex-wrap: wrap; gap: 6px; }
+  .hash a { font-size: 13px; font-weight: 600; color: var(--lav-deep); text-decoration: none; background: var(--sky);
+            padding: 4px 11px; border-radius: 999px; transition: background .15s; }
+  .hash a:hover { background: var(--lav); }
+
+  footer { text-align: center; color: var(--sub); font-size: 13px; margin-top: 40px; }
+
+  @media (max-width: 720px) {   /* 폰에서는 위아래로 */
+    .card-body, .extra { grid-template-columns: 1fr; }
+    .col + .col { border-left: 0; border-top: 1px solid var(--line); }
+    .hero { padding-top: 40px; }
+    .tags { grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .tag { padding: 10px 2px 8px; font-size: 12px; } .tag .ico { font-size: 21px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <h1><span class="hl">콘텐츠 한 스푼</span> 🥄</h1>
+    <p>취향 태그를 1~2개 고르면, 다른 사람들이 찍은 영상이랑 오늘의 기획을 같이 보여줄게.</p>
+    <div class="theme-pill" id="theme" hidden></div>
+  </header>
+
+  <div class="step"><span class="num">1</span>취향 태그 고르기 <span class="count" id="count">0 / 2</span></div>
+  <div class="tags" id="tags"></div>
+
+  <div class="step"><span class="num">2</span>추천 콘텐츠</div>
+  <div class="msg" id="msg"></div>
+  <div class="grid" id="results"></div>
+
+  <footer>영상을 누르면 인스타에서 열려</footer>
+</div>
+
+<!-- 오늘의 기획: 예약 작업이 매일 아침 8시 30분쯤 이 파일을 새로 쓰고, 화면은 9시 정각에 새 기획으로 바뀌어 -->
+
+<script src="daily.js"></script>
+<script>
+// ───────── 태그 목록 ─────────
+// 태그 하나 = 콘텐츠 유형 하나 (CONTENTS의 tags와 1:1로 맞춰져 있어)
+const TAGS = ["요리","여행","패션","뷰티","운동","공부","반려동물","인테리어",
+              "카페","독서","그림","사진","음악","게임","IT/AI","재테크"];
+
+// ───────── 콘텐츠 유형 데이터 ─────────
+// posts: 예시 릴스의 게시물 코드 (instagram.com/p/코드/ 에서 '코드' 부분).
+//   2026-11-21에 각 유형의 해시태그 페이지에서 모은 공개 릴스야.
+//   사진을 복사하지 않고 인스타 공식 임베드(퍼가기)로 보여줘. 주인이 지우면 여기서도 사라져.
+// hashtags: 누르면 인스타 해시태그 페이지가 열려서 실제 예시를 볼 수 있어.
+const CONTENTS = [
+  { title:"자취 요리 레시피 릴스", tags:["요리"], format:"릴스 15~30초", level:"쉬움",
+    ideas:["편의점 재료 5분 요리","냉장고 털이 레시피","1인분 밀프렙 일주일"],
+    hashtags:["자취요리","간단레시피","자취생레시피"],
+    posts:["DdBV4YiRagc","DfGkvc0TRxL","DYE03JdiBBQ","DaNbKzcxn3A","DfmIRHvpC1k"] },
+  { title:"카페 투어 기록", tags:["카페"], format:"캐러셀 사진 + 짧은 리뷰", level:"쉬움",
+    ideas:["동네 숨은 카페 TOP 3","디저트 맛집 지도","분위기별 카페 추천"],
+    hashtags:["카페투어","카페추천","디저트맛집"],
+    posts:["DJHQVT4ppSk","Dd2kj0Kvi_B","C-wba50yPFo","DXociKIzU4W"] },
+  { title:"여행 브이로그", tags:["여행"], format:"릴스 30~60초", level:"보통",
+    ideas:["1박 2일 코스 정리","여행 경비 공개","현지인 맛집 찾기"],
+    hashtags:["여행브이로그","국내여행","여행스타그램"],
+    posts:["DYUKr3zz6Rs","DXCAH3OktAc","DcQf91EhTvb","DUIqVewEhqb","DPv2siKEXEO","DRBoZ6mk3eQ"] },
+  { title:"데일리 코디 (OOTD)", tags:["패션"], format:"사진 / 릴스 전환 효과", level:"쉬움",
+    ideas:["옷 하나로 3가지 코디","계절별 데일리룩","가성비 쇼핑 하울"],
+    hashtags:["ootd","데일리룩","코디추천"],
+    posts:["C_sRjm-JqqC","DYUOz-YJInx","CyI3_vevrbf","Dey9KlSSJoq","DRwjVnxDxBi"] },
+  { title:"메이크업 튜토리얼", tags:["뷰티"], format:"릴스 Before/After", level:"보통",
+    ideas:["5분 출근 메이크업","올리브영 추천템 리뷰","퍼스널컬러별 립 추천"],
+    hashtags:["메이크업튜토리얼","데일리메이크업","화장품추천"],
+    posts:["DcgJcc3PukT","De1v4jogDf6","DcXaMNpTYNF","DbA6PuxJD_f","Dd6QyUszyVv"] },
+  { title:"홈트 / 운동 챌린지", tags:["운동"], format:"릴스 + 진행 기록", level:"보통",
+    ideas:["30일 플랭크 챌린지","10분 홈트 루틴","운동 전후 변화 기록"],
+    hashtags:["홈트","오운완","운동기록"],
+    posts:["DfWJjh9OZsw","C-PoAmUJPiP","DU4zVNUCYz_","DFDN1QhPtWL"] },
+  { title:"공부 기록 (스터디윗미)", tags:["공부"], format:"타임랩스 릴스 / 캐러셀", level:"쉬움",
+    ideas:["하루 공부 타임랩스","필기 노트 공개","시험 D-day 기록"],
+    hashtags:["공스타그램","스터디윗미","공부기록"],
+    posts:["C2EIx28SRH1","DaLJTCJK4kN","DRHFYDHksuV","C5ux9rLynPT","DUnxwAhieRW"] },
+  { title:"반려동물 일상", tags:["반려동물"], format:"릴스 짧은 클립", level:"쉬움",
+    ideas:["우리 집 강아지/고양이 하루","간식 리뷰","웃긴 순간 모음"],
+    hashtags:["멍스타그램","냥스타그램","반려동물"],
+    posts:["DbTPVcsnUnC","Debwt5zIxKl","DRAMcJOklEl","DcVCohEBT4c","Df5leB2TBeQ","C4UlBwjrI-G"] },
+  { title:"방꾸미기 Before/After", tags:["인테리어"], format:"릴스 전후 비교", level:"보통",
+    ideas:["원룸 셀프 인테리어","다이소템으로 방꾸미기","책상 셋업 공개"],
+    hashtags:["방꾸미기","원룸인테리어","데스크셋업"],
+    posts:["DRgh8tdkg_N","Deob1pLSCvq","Dbsff5-zKeB","DaK1GtGhj7v"] },
+  { title:"책 리뷰 카드뉴스", tags:["독서"], format:"캐러셀 카드뉴스", level:"쉬움",
+    ideas:["한 줄 요약 책 추천","인상 깊은 문장 모음","이달의 독서 기록"],
+    hashtags:["책스타그램","책추천","독서기록"],
+    posts:["Df5iawOTktY","DVbIGHtEcbn","De_43FQyyUX","DQRbqxJAVXD","DeOf5W-Obe6"] },
+  { title:"그림 과정 타임랩스", tags:["그림"], format:"릴스 타임랩스", level:"보통",
+    ideas:["드로잉 과정 1분 영상","같은 그림 실력 비교","팬아트 / 캐릭터 그리기"],
+    hashtags:["그림스타그램","드로잉","일러스트"],
+    posts:["DRt91rrD4i9","C0X9ekFvfa5","DXLAGbdkg3I","DQLhwMQgfTA","C2riwYyvJGG","DZPm96dPMQm"] },
+  { title:"커버곡 / 연주 영상", tags:["음악"], format:"릴스 30~60초", level:"어려움",
+    ideas:["유행곡 짧은 커버","악기 연주 챌린지","플레이리스트 추천"],
+    hashtags:["커버곡","연주영상","노래추천"],
+    posts:["DSNYTPFEzFN","DegjvkAzSvg","Dev7LEvThfd","DeKO4W3vvzs","DewI9xjhNlX","DfCYl_QpART"] },
+  { title:"게임 하이라이트", tags:["게임"], format:"릴스 하이라이트 편집", level:"보통",
+    ideas:["명장면 모음","초보 꿀팁 3가지","신작 게임 첫인상 리뷰"],
+    hashtags:["게임스타그램","게임추천","게임하이라이트"],
+    posts:["DfbrHBtB5lG","DfUFKx6zaTz","DblCNJZyr9q","DfHo9QJhPRv","DfwRhS6P8sR","DfXEWWBT7c0"] },
+  { title:"AI / 코딩 꿀팁 카드뉴스", tags:["IT/AI"], format:"캐러셀 카드뉴스", level:"보통",
+    ideas:["AI 툴 추천 TOP 5","초보 코딩 공부 순서","AI로 업무 시간 줄이기"],
+    hashtags:["ai활용","코딩공부","개발자"],
+    posts:["DfegZq4h_pS","Ct6Nw_WvXfT","DcNDOOmz3jv","Dd8KC7KTKUQ","DfV4VpLyRZF"] },
+  { title:"절약 / 가계부 기록", tags:["재테크"], format:"캐러셀 / 릴스", level:"쉬움",
+    ideas:["한 달 생활비 공개","무지출 챌린지","절약 꿀팁 모음"],
+    hashtags:["가계부","절약","짠테크"],
+    posts:["Df4y5lXS7QQ","DKB2CRGPQ4C","C-eT04Ovm8p","DaNda3yhZel","CrahwdJppg3"] },
+  { title:"감성 사진 / 사진 꿀팁", tags:["사진"], format:"캐러셀 사진", level:"보통",
+    ideas:["폰카로 감성 사진 찍는 법","보정 전후 비교","포토스팟 추천"],
+    hashtags:["감성사진","사진스타그램","포토스팟"],
+    posts:["DflejaDzd9b","Dfrjotqz6Ma","DemWxkph9IJ","Dfb9nW-yH8l"] },
+];
+
+// 태그마다 보여줄 아이콘
+const ICONS = { "요리":"🍳","여행":"✈️","패션":"👗","뷰티":"💄","운동":"💪","공부":"📚","반려동물":"🐶",
+  "인테리어":"🛋️","카페":"☕","독서":"📖","그림":"🎨","사진":"📸","음악":"🎵","게임":"🎮","IT/AI":"🤖","재테크":"💰" };
+
+// ───────── 동작 ─────────
+const MAX = 2, MIN = 1;
+let selected = [];
+const tagBox = document.getElementById("tags");
+const countEl = document.getElementById("count");
+const msgEl = document.getElementById("msg");
+const resultBox = document.getElementById("results");
+
+function renderTags() {
+  tagBox.innerHTML = "";
+  TAGS.forEach(t => {
+    const b = document.createElement("button");
+    b.className = "tag" + (selected.includes(t) ? " on" : "");
+    b.innerHTML = `<span class="ico">${ICONS[t] || "#"}</span>#${t}`;
+    b.disabled = !selected.includes(t) && selected.length >= MAX;
+    b.onclick = () => {
+      selected = selected.includes(t) ? selected.filter(x => x !== t) : [...selected, t];
+      renderTags(); renderResults();
+    };
+    tagBox.appendChild(b);
+  });
+  countEl.textContent = `${selected.length} / ${MAX}`;
+}
+
+function renderResults() {
+  resultBox.innerHTML = "";
+  if (selected.length < MIN) {
+    msgEl.textContent = "";
+    resultBox.innerHTML = `<div class="empty"><div class="big">👆</div>위에서 관심 있는 태그를 골라봐!<br>최대 2개까지 고를 수 있어.</div>`;
+    return;
+  }
+
+  // 고른 태그의 콘텐츠만, 고른 순서대로 보여줘
+  const list = selected.flatMap(t => CONTENTS.filter(c => c.tags.includes(t)));
+
+  msgEl.textContent = selected.length === 1
+    ? "태그 하나 더 고르면 같이 비교해볼 수 있어."
+    : "두 콘텐츠를 비교해보고 마음에 드는 걸로 시작해봐!";
+
+  list.forEach(c => {
+    const t = c.tags[0];
+    const card = document.createElement("article");
+    card.className = "card";
+    card.innerHTML = `
+      <div class="card-head">
+        <div class="card-ico">${ICONS[t] || "✨"}</div>
+        <div>
+          <h3>${c.title}</h3>
+          <div class="badges">
+            <span class="badge tagb">#${t}</span>
+            <span class="badge">${c.format}</span>
+            <span class="badge lv lv-${c.level}">난이도 ${c.level}</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <!-- 왼쪽: 예시 영상 -->
+        <div class="col">
+          <div class="col-title">🎬 이렇게 찍었어요 <small>옆으로 넘겨 보기</small></div>
+          <div class="posts">${c.posts.map(id =>
+            `<div class="post">
+               <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/${id}/" data-instgrm-version="14">
+                 <a class="fallback" href="https://www.instagram.com/p/${id}/" target="_blank" rel="noopener">▶ 인스타에서 보기</a>
+               </blockquote>
+             </div>`
+          ).join("")}</div>
+          <div class="swipe">← 옆으로 넘기면 총 ${c.posts.length}개를 볼 수 있어 →</div>
+        </div>
+        <!-- 오른쪽: 기획 -->
+        <div class="col">
+          <div class="col-title">📝 기획을 도와드립니다!</div>
+          ${dailyHTML(c.title)}
+        </div>
+      </div>
+      <div class="extra">
+        <div><h4>이런 것도 올려봐</h4>
+          <div class="ideas">${c.ideas.map(i => `<span>${i}</span>`).join("")}</div></div>
+        <div><h4>인스타에서 더 보기</h4>
+          <div class="hash">${c.hashtags.map(h =>
+            `<a href="https://www.instagram.com/explore/tags/${encodeURIComponent(h)}/" target="_blank" rel="noopener">#${h}</a>`
+          ).join("")}</div></div>
+      </div>`;
+    resultBox.appendChild(card);
+  });
+  loadInstagramEmbed();
+}
+
+// 인스타 공식 임베드 스크립트 (사진을 복사하지 않고 인스타가 직접 보여줘)
+function loadInstagramEmbed() {
+  if (window.instgrm) { window.instgrm.Embeds.process(); return; }
+  if (document.getElementById("ig-embed")) return;   // 불러오는 중이면 다 불러온 뒤 알아서 처리돼
+  const s = document.createElement("script");
+  s.id = "ig-embed";
+  s.src = "https://www.instagram.com/embed.js";
+  s.async = true;
+  document.body.appendChild(s);
+}
+
+// ───────── 오늘의 기획 ─────────
+function todayStr() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+// 새 기획은 아침 8시 30분쯤 미리 써지지만, 화면에는 정확히 9시부터 보여줘.
+// 9시 전에는 어제 기획(DAILY_PREV)을, 9시부터는 오늘 기획(DAILY)을 써.
+const SWITCH_HOUR = 9;
+function activeDaily() {
+  const D = window.DAILY, P = window.DAILY_PREV;
+  if (!D) return null;
+  if (D.date === todayStr() && new Date().getHours() < SWITCH_HOUR && P) return P;
+  return D;
+}
+
+function renderTheme() {
+  const D = activeDaily();
+  const el = document.getElementById("theme");
+  if (!D || !D.theme) { el.hidden = true; return; }
+  const [, m, d] = D.date.split("-").map(Number);
+  el.innerHTML = `📅 ${m}월 ${d}일 오늘의 테마 · <b>${D.theme}</b>`;
+  el.hidden = false;
+}
+
+// 페이지를 켜둔 채로 9시가 되면 자동으로 새 기획으로 바꿔줘
+function scheduleSwitch() {
+  const now = new Date(), at = new Date(now);
+  at.setHours(SWITCH_HOUR, 0, 1, 0);
+  if (at <= now) at.setDate(at.getDate() + 1);
+  setTimeout(() => { renderTheme(); renderResults(); scheduleSwitch(); }, at - now);
+}
+
+function dailyHTML(title) {
+  const D = activeDaily();
+  const p = D && D.plans && D.plans[title];
+  if (!p) return `<div class="plan-empty">아직 기획이 없어.</div>`;
+  return `
+    <span class="plan-label">✨ 오늘의 기획</span>
+    <div class="plan-title">${p.title}</div>
+    <div class="hook"><small>첫 3초 멘트</small>“${p.hook}”</div>
+    <ol class="steps">${p.steps.map(s => `<li>${s}</li>`).join("")}</ol>
+    <div class="caption"><span class="who">캡션</span>${p.caption}</div>
+    <div class="tip">💡 ${p.tip}</div>`;
+}
+
+renderTheme();
+renderTags();
+renderResults();
+scheduleSwitch();
+</script>
+</body>
+</html>
