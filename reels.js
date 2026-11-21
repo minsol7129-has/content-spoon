@@ -1,7 +1,11 @@
 // 이렇게 찍었어요 — 유형별 공개 릴스 게시물 코드 (instagram.com/p/코드/ 의 코드 부분)
-// 사이트는 매일 아침 10시에 유형마다 이 중 5개를 돌아가며 보여줘.
+// 사이트는 유형마다 이 중 5개를 일주일 동안 보여주고, 매주 월요일 아침 10시에 다음 5개로 바꿔.
 // 예약 작업이 매일 로그인 없이 임베드되는지 검사해서, 지워졌거나 비공개가 된 영상은 빼.
 // 키는 index.html CONTENTS의 title과 똑같아야 해.
+
+// 이 20개 묶음의 1주차가 시작된 월요일. 한 달에 한 번 새 20개로 갈 때 그 주 월요일로 바꿔.
+window.REELS_START = "2026-11-16";
+
 window.REELS = {
   "자취 요리 레시피 릴스": ["DdBV4YiRagc","DfGkvc0TRxL","DYE03JdiBBQ","DaNbKzcxn3A","DfmIRHvpC1k"
     ,"Deqq054oXBj","DcgG2gKqhnX","DdK9IbaxrJa","DXp_fF2D5K3","DciZ95LvJW5"

@@ -169,7 +169,7 @@
 <!-- 오늘의 기획: 예약 작업이 매일 아침 8시 30분쯤 이 파일을 새로 쓰고, 화면은 9시 정각에 새 기획으로 바뀌어 -->
 
 <script src="daily.js"></script>
-<!-- 이렇게 찍었어요 영상 묶음: 유형마다 최대 20개, 매일 아침 10시에 그중 5개씩 돌아가며 보여줘 -->
+<!-- 이렇게 찍었어요 영상 묶음: 유형마다 최대 20개, 매주 월요일 아침 10시에 다음 5개로 바뀌어 -->
 <script src="reels.js"></script>
 <script>
 // ───────── 태그 목록 ─────────
@@ -358,14 +358,19 @@ function renderTheme() {
   el.hidden = false;
 }
 
-// ───────── 이렇게 찍었어요: 매일 아침 10시에 영상 5개씩 돌려 보여주기 ─────────
-const REEL_HOUR = 10, REELS_PER_DAY = 5;
+// ───────── 이렇게 찍었어요: 매주 월요일 아침 10시에 영상 5개씩 바꿔 보여주기 ─────────
+// 모아둔 20개를 4묶음(5개씩)으로 나눠서 1주차 → 2주차 → 3주차 → 4주차 순서로 보여줘.
+// 한 달에 한 번 새 20개로 갈면, reels.js의 REELS_START를 그 주 월요일로 바꿔서 1주차부터 다시 시작해.
+const REEL_HOUR = 10, REELS_PER_WEEK = 5;
 
-// '영상 날짜' 번호: 10시 전에는 어제로 쳐. 그래서 매일 10시 정각에 번호가 하나 올라가.
-function reelDayNumber() {
-  const d = new Date();
-  if (d.getHours() < REEL_HOUR) d.setDate(d.getDate() - 1);
-  return Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000);
+function dayNumber(d) { return Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000); }
+
+// 지금이 REELS_START부터 몇 번째 주인지 (월요일 10시 전은 아직 지난주로 쳐)
+function reelWeekNumber() {
+  const now = new Date();
+  if (now.getHours() < REEL_HOUR) now.setDate(now.getDate() - 1);
+  const [y, m, d] = (window.REELS_START || "2026-11-16").split("-").map(Number);
+  return Math.max(0, Math.floor((dayNumber(now) - dayNumber(new Date(y, m - 1, d))) / 7));
 }
 
 // 유형마다 정해진 순서로 섞기 (같은 유형은 언제 열어도 같은 순서)
@@ -378,16 +383,16 @@ function shuffled(list, seedText) {
   return a;
 }
 
-// 오늘 보여줄 영상 5개: 섞은 순서에서 하루에 5칸씩 앞으로 가. 다 돌면 처음부터 다시.
+// 이번 주에 보여줄 영상 5개: 섞은 순서에서 한 주에 5칸씩 앞으로 가. 4주가 지나면(새 20개로 갈기 전엔) 처음부터 다시.
 function todaysReels(title) {
   const pool = (window.REELS && window.REELS[title]) || [];
-  if (pool.length <= REELS_PER_DAY) return pool;
-  const order = shuffled(pool, title);
-  const start = (reelDayNumber() * REELS_PER_DAY) % order.length;
-  return Array.from({ length: REELS_PER_DAY }, (_, i) => order[(start + i) % order.length]);
+  if (pool.length <= REELS_PER_WEEK) return pool;
+  const order = shuffled(pool, title + (window.REELS_START || ""));
+  const start = (reelWeekNumber() * REELS_PER_WEEK) % order.length;
+  return Array.from({ length: REELS_PER_WEEK }, (_, i) => order[(start + i) % order.length]);
 }
 
-// 페이지를 켜둔 채로 9시(기획)나 10시(영상)가 되면 자동으로 다시 그려줘
+// 페이지를 켜둔 채로 9시(기획)나 10시(월요일 영상)가 되면 자동으로 다시 그려줘
 function scheduleSwitch() {
   const now = new Date();
   const next = [SWITCH_HOUR, REEL_HOUR].map(h => {
