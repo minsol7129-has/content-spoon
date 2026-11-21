@@ -4,6 +4,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>콘텐츠 한 스푼</title>
+<meta name="description" content="취향 태그를 고르면 예시 릴스와 AI가 도와주는 오늘의 콘텐츠 기획을 보여줘요.">
+<!-- 카톡·문자·SNS에 링크를 보낼 때 뜨는 미리보기 카드 -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="콘텐츠 한 스푼">
+<meta property="og:title" content="콘텐츠 한 스푼 🥄">
+<meta property="og:description" content="취향 태그를 고르면 예시 릴스와 AI가 도와주는 오늘의 콘텐츠 기획을 보여줘요.">
+<meta property="og:url" content="https://minsol7129-has.github.io/content-spoon/">
+<meta property="og:image" content="https://minsol7129-has.github.io/content-spoon/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ko_KR">
+<meta name="twitter:card" content="summary_large_image">
 <!-- 글꼴: Pretendard (인터넷 없으면 맑은 고딕으로 보여) -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <style>
@@ -43,6 +55,7 @@
                 background: var(--lav); color: var(--lav-deep); padding: 7px 16px; border-radius: 999px;
                 font-size: 14px; font-weight: 600; }
   .theme-pill b { color: var(--text); font-weight: 700; }
+  .theme-pill[hidden] { display: none; }   /* 테마가 없으면 빈 알약도 숨기기 */
 
   /* ───────── 단계 제목 ───────── */
   .step { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; margin: 32px 0 14px; }
