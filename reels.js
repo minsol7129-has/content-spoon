@@ -56,7 +56,7 @@ window.REELS = {
     ,"DZUxGqYOnE3","Dc6ISPfS7VR","DUitcQmEp1W","DQEd31REjGt","DcdiOtYhAr_"
     ,"CFEHtvjgqHc","DbesMf0hgDx","DeOoh07JNc0","DfUy62ePky5","DUujFErk4x5"],
   "게임 하이라이트": ["DfbrHBtB5lG","DfUFKx6zaTz","DblCNJZyr9q","DfHo9QJhPRv","DfwRhS6P8sR"
-    ,"DfXEWWBT7c0","DeYxHObBywX","Df4rWuts-tS","Dc25kUPTRwF","DVYOWyDEcV9"
+    ,"DfXEWWBT7c0","DeYxHObBywX","Dc25kUPTRwF","DVYOWyDEcV9"
     ,"DfMp3aVsKCH","DdwJE83vN3I","Df363CvhtHU","DfUyV8qITw5","DfoEdYOTg6D"
     ,"DcalHePh83Z","DaPnr25RrYM","DgAK-yhonlD","Df6DB0BT52K"],
   "AI / 코딩 꿀팁 카드뉴스": ["DfegZq4h_pS","Ct6Nw_WvXfT","DcNDOOmz3jv","Dd8KC7KTKUQ","DfV4VpLyRZF"
